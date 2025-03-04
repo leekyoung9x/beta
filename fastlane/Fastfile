@@ -15,7 +15,7 @@ API_KEY_PATH = "./fastlane/AuthKey_#{API_KEY_ID}.p8"
 RESIGN_IPA_PATH = "#{Dir.home}/ipa/NroNgoo.ipa"
 RESIGNED_IPA_PATH = "#{Dir.home}/ipa/NroNgoo.ipa"
 
-PROVISIONING_PROFILE_DIR = "#{Dir.home}/Downloads/MobileVersion"
+PROVISIONING_PROFILE_DIR = "#{Dir.home}/MobileVersion"
 
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
 DISPLAY_NAME = "NroNgoo"
