@@ -13,9 +13,7 @@ ISSUER_ID = "fab32ffa-1bd6-4f10-adba-896f0fbf60ff"
 API_KEY_PATH = "./fastlane/AuthKey_#{API_KEY_ID}.p8"
 
 RESIGN_IPA_PATH = "#{Dir.home}/work/beta/beta/ipa/NroNgoo.ipa"
-RESIGNED_IPA_PATH = "#{Dir.home}/work/beta/beta/ipa/NroNgoo.ipa"
-
-PROVISIONING_PROFILE_DIR = "#{Dir.home}/work/beta/beta/MobileVersion"
+RESIGNED_IPA_PATH = "#{Dir.home}/work/beta/beta/ipa/NroNgoo_resigned.ipa"
 
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
 DISPLAY_NAME = "NroNgoo"
@@ -58,6 +56,7 @@ platform :ios do
       in_house: false
     )
 
+    # Sử dụng match để lấy provisioning profile
     match(
       type: "appstore",
       app_identifier: APP_IDENTIFIER,
@@ -67,6 +66,16 @@ platform :ios do
       readonly: false
     )
 
+    # Lấy provisioning profile đã được tải về bởi match
+    provisioning_profile_path = Actions.lane_context[SharedValues::MATCH_PROVISIONING_PROFILE_PATH]
+
+    if provisioning_profile_path.nil? || provisioning_profile_path.empty?
+      UI.user_error!("❌ Không tìm thấy provisioning profile được cài bởi match!")
+    else
+      UI.message("✅ Sử dụng provisioning profile từ match: #{provisioning_profile_path}")
+    end
+
+    # Lấy chứng chỉ Apple Distribution
     signing_identity = `security find-identity -v -p codesigning | grep "Apple Distribution" | awk -F'"' '{print $2}'`.strip
 
     if signing_identity.empty?
@@ -75,26 +84,7 @@ platform :ios do
       UI.message("🔐 Sử dụng chứng chỉ: #{signing_identity}")
     end
 
-    # Kiểm tra xem thư mục có tồn tại không
-    if Dir.exist?(PROVISIONING_PROFILE_DIR)
-      # Lấy danh sách tất cả các file và thư mục trong PROVISIONING_PROFILE_DIR
-      all_files = Dir.entries(PROVISIONING_PROFILE_DIR)
-      
-      # Log toàn bộ nội dung thư mục
-      UI.message("📂 Nội dung thư mục #{PROVISIONING_PROFILE_DIR}:")
-      all_files.each { |file| UI.message("  - #{file}") }
-    else
-      UI.user_error!("❌ Thư mục #{PROVISIONING_PROFILE_DIR} không tồn tại!")
-    end
-
-    provisioning_profile_path = Dir["#{PROVISIONING_PROFILE_DIR}/*.mobileprovision"].first
-
-    if provisioning_profile_path.nil?
-      UI.user_error!("❌ Không tìm thấy provisioning profile nào!")
-    else
-      UI.message("✅ Sử dụng provisioning profile: #{provisioning_profile_path}")
-    end
-
+    # Resign IPA với provisioning profile của match
     resign(
       ipa: RESIGN_IPA_PATH,
       signing_identity: signing_identity,
@@ -107,6 +97,7 @@ platform :ios do
 
     UI.success("🎉 IPA đã được ký lại thành công!")
 
+    # Đẩy IPA đã resign lên TestFlight
     upload_to_testflight(
       ipa: RESIGNED_IPA_PATH,
       skip_waiting_for_build_processing: false
