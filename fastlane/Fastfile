@@ -100,7 +100,7 @@ platform :ios do
     # Đẩy IPA đã resign lên TestFlight
     upload_to_testflight(
       ipa: RESIGNED_IPA_PATH,
-      skip_waiting_for_build_processing: false
+      skip_waiting_for_build_processing: true
     )
 
     UI.success("🚀 IPA đã được upload lên TestFlight thành công!")
