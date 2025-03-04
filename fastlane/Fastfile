@@ -102,8 +102,7 @@ platform :ios do
       bundle_id: APP_IDENTIFIER,
       display_name: DISPLAY_NAME,
       short_version: SHORT_VERSION,
-      bundle_version: BUNDLE_VERSION,
-      output_path: RESIGNED_IPA_PATH
+      bundle_version: BUNDLE_VERSION
     )
 
     UI.success("🎉 IPA đã được ký lại thành công!")
