@@ -17,9 +17,6 @@ RESIGNED_IPA_PATH = "#{Dir.home}/Downloads/ResignedIpa/thiendia3d_resigned.ipa"
 
 PROVISIONING_PROFILE_DIR = "#{Dir.home}/Downloads/MobileVersion"
 
-TF_GROUPS = ["Testers"]
-TF_CHANGELOG = "New resigned build uploaded for testing"
-
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
 DISPLAY_NAME = "ThienDia3D"
 SHORT_VERSION = "1.0.0"
@@ -101,9 +98,6 @@ platform :ios do
 
     upload_to_testflight(
       ipa: RESIGNED_IPA_PATH,
-      changelog: TF_CHANGELOG,
-      distribute_external: true,
-      groups: TF_GROUPS,
       skip_waiting_for_build_processing: false
     )
 
