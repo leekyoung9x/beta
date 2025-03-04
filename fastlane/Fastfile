@@ -20,7 +20,7 @@ PROVISIONING_PROFILE_DIR = "#{Dir.home}/Downloads/MobileVersion"
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
 DISPLAY_NAME = "NroNgoo"
 SHORT_VERSION = "1.0.0"
-BUNDLE_VERSION = "1.0.3"
+BUNDLE_VERSION = "2.0.1"
 
 ### 📌 PLATFORM CONFIG ###
 platform :ios do
