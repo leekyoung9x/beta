@@ -1,0 +1,112 @@
+default_platform(:ios)
+
+### 🔧 CẤU HÌNH BIẾN TOÀN CỤC ###
+KEYCHAIN_NAME = "fastlane_tmp.keychain"
+KEYCHAIN_PASSWORD = "1234"
+MATCH_PASSWORD = "12345678@Abc"
+
+APPLE_TEAM_ID = "82SS6KUW4P"
+APP_IDENTIFIER = "com.chanbeodu.chubeodan"
+
+API_KEY_ID = "7K64KRXNM6"
+ISSUER_ID = "fab32ffa-1bd6-4f10-adba-896f0fbf60ff"
+API_KEY_PATH = "./fastlane/AuthKey_#{API_KEY_ID}.p8"
+
+RESIGN_IPA_PATH = "#{Dir.home}/Downloads/ResignIpa/thiendia3d.ipa"
+RESIGNED_IPA_PATH = "#{Dir.home}/Downloads/ResignedIpa/thiendia3d_resigned.ipa"
+
+PROVISIONING_PROFILE_DIR = "#{Dir.home}/Downloads/MobileVersion"
+
+TF_GROUPS = ["Testers"]
+TF_CHANGELOG = "New resigned build uploaded for testing"
+
+### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
+DISPLAY_NAME = "ThienDia3D"
+SHORT_VERSION = "1.0.0"
+BUNDLE_VERSION = "1.0.3"
+
+### 📌 PLATFORM CONFIG ###
+platform :ios do
+  desc "Setup Keychain for CI/CD"
+  lane :setup_keychain do
+    UI.message("🔍 Checking if keychain '#{KEYCHAIN_NAME}' already exists...")
+
+    existing_keychains = sh("security list-keychains").strip
+    if existing_keychains.include?(KEYCHAIN_NAME)
+      UI.message("✅ Keychain '#{KEYCHAIN_NAME}' already exists. Skipping creation.")
+      sh "security unlock-keychain -p \"#{KEYCHAIN_PASSWORD}\" #{KEYCHAIN_NAME}"
+      sh "security set-keychain-settings -t 3600 -u #{KEYCHAIN_NAME}"
+    else
+      UI.message("🔐 Creating new keychain: #{KEYCHAIN_NAME}")
+      sh "security create-keychain -p \"#{KEYCHAIN_PASSWORD}\" #{KEYCHAIN_NAME}"
+      sh "security list-keychains -s #{KEYCHAIN_NAME}"
+      sh "security default-keychain -s #{KEYCHAIN_NAME}"
+      sh "security unlock-keychain -p \"#{KEYCHAIN_PASSWORD}\" #{KEYCHAIN_NAME}"
+      sh "security set-keychain-settings -t 3600 -u #{KEYCHAIN_NAME}"
+      UI.message("✅ Keychain setup completed: #{KEYCHAIN_NAME}")
+    end
+  end
+
+  desc "Re-sign an IPA file with the latest provisioning profile and upload to TestFlight"
+  lane :resign_and_upload do
+    setup_keychain
+
+    ENV["MATCH_PASSWORD"] ||= MATCH_PASSWORD
+
+    api_key = app_store_connect_api_key(
+      key_id: API_KEY_ID,
+      issuer_id: ISSUER_ID,
+      key_filepath: API_KEY_PATH,
+      duration: 1200,
+      in_house: false
+    )
+
+    match(
+      type: "appstore",
+      app_identifier: APP_IDENTIFIER,
+      api_key: api_key,
+      team_id: APPLE_TEAM_ID,
+      keychain_name: KEYCHAIN_NAME,
+      readonly: false
+    )
+
+    signing_identity = `security find-identity -v -p codesigning | grep "Apple Distribution" | awk -F'"' '{print $2}'`.strip
+
+    if signing_identity.empty?
+      UI.user_error!("❌ Không tìm thấy chứng chỉ Apple Distribution nào!")
+    else
+      UI.message("🔐 Sử dụng chứng chỉ: #{signing_identity}")
+    end
+
+    provisioning_profile_path = Dir["#{PROVISIONING_PROFILE_DIR}/*.mobileprovision"].first
+
+    if provisioning_profile_path.nil?
+      UI.user_error!("❌ Không tìm thấy provisioning profile nào!")
+    else
+      UI.message("✅ Sử dụng provisioning profile: #{provisioning_profile_path}")
+    end
+
+    resign(
+      ipa: RESIGN_IPA_PATH,
+      signing_identity: signing_identity,
+      provisioning_profile: provisioning_profile_path,
+      bundle_id: APP_IDENTIFIER,
+      display_name: DISPLAY_NAME,
+      short_version: SHORT_VERSION,
+      bundle_version: BUNDLE_VERSION,
+      output_path: RESIGNED_IPA_PATH
+    )
+
+    UI.success("🎉 IPA đã được ký lại thành công!")
+
+    upload_to_testflight(
+      ipa: RESIGNED_IPA_PATH,
+      changelog: TF_CHANGELOG,
+      distribute_external: true,
+      groups: TF_GROUPS,
+      skip_waiting_for_build_processing: false
+    )
+
+    UI.success("🚀 IPA đã được upload lên TestFlight thành công!")
+  end
+end
