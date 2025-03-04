@@ -3,7 +3,7 @@ default_platform(:ios)
 ### 🔧 CẤU HÌNH BIẾN TOÀN CỤC ###
 KEYCHAIN_NAME = "fastlane_tmp.keychain"
 KEYCHAIN_PASSWORD = "1234"
-MATCH_PASSWORD = "12345678@Abc"
+MATCH_PASSWORD = "hihi"
 
 APPLE_TEAM_ID = "82SS6KUW4P"
 APP_IDENTIFIER = "com.chanbeodu.chubeodan"
