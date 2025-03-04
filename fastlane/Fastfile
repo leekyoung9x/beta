@@ -3,7 +3,7 @@ default_platform(:ios)
 ### 🔧 CẤU HÌNH BIẾN TOÀN CỤC ###
 KEYCHAIN_NAME = "fastlane_tmp.keychain"
 KEYCHAIN_PASSWORD = "1234"
-MATCH_PASSWORD = "12345678@Abc"
+MATCH_PASSWORD = "hihi"
 
 APPLE_TEAM_ID = "82SS6KUW4P"
 APP_IDENTIFIER = "com.chanbeodu.chubeodan"
@@ -12,18 +12,15 @@ API_KEY_ID = "7K64KRXNM6"
 ISSUER_ID = "fab32ffa-1bd6-4f10-adba-896f0fbf60ff"
 API_KEY_PATH = "./fastlane/AuthKey_#{API_KEY_ID}.p8"
 
-RESIGN_IPA_PATH = "#{Dir.home}/Downloads/ResignIpa/thiendia3d.ipa"
-RESIGNED_IPA_PATH = "#{Dir.home}/Downloads/ResignedIpa/thiendia3d_resigned.ipa"
+RESIGN_IPA_PATH = "#{Dir.home}/ipa/NroNgoo.ipa"
+RESIGNED_IPA_PATH = "#{Dir.home}/ipa/NroNgoo.ipa"
 
-PROVISIONING_PROFILE_DIR = "#{Dir.home}/Downloads/MobileVersion"
-
-TF_GROUPS = ["Testers"]
-TF_CHANGELOG = "New resigned build uploaded for testing"
+PROVISIONING_PROFILE_DIR = "#{Dir.home}/MobileVersion"
 
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
-DISPLAY_NAME = "ThienDia3D"
+DISPLAY_NAME = "NroNgoo"
 SHORT_VERSION = "1.0.0"
-BUNDLE_VERSION = "1.0.3"
+BUNDLE_VERSION = "2.0.1"
 
 ### 📌 PLATFORM CONFIG ###
 platform :ios do
@@ -101,9 +98,6 @@ platform :ios do
 
     upload_to_testflight(
       ipa: RESIGNED_IPA_PATH,
-      changelog: TF_CHANGELOG,
-      distribute_external: true,
-      groups: TF_GROUPS,
       skip_waiting_for_build_processing: false
     )
 
