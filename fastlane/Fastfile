@@ -75,6 +75,18 @@ platform :ios do
       UI.message("🔐 Sử dụng chứng chỉ: #{signing_identity}")
     end
 
+    # Kiểm tra xem thư mục có tồn tại không
+    if Dir.exist?(PROVISIONING_PROFILE_DIR)
+      # Lấy danh sách tất cả các file và thư mục trong PROVISIONING_PROFILE_DIR
+      all_files = Dir.entries(PROVISIONING_PROFILE_DIR)
+      
+      # Log toàn bộ nội dung thư mục
+      UI.message("📂 Nội dung thư mục #{PROVISIONING_PROFILE_DIR}:")
+      all_files.each { |file| UI.message("  - #{file}") }
+    else
+      UI.user_error!("❌ Thư mục #{PROVISIONING_PROFILE_DIR} không tồn tại!")
+    end
+
     provisioning_profile_path = Dir["#{PROVISIONING_PROFILE_DIR}/*.mobileprovision"].first
 
     if provisioning_profile_path.nil?
