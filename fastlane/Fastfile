@@ -12,10 +12,10 @@ API_KEY_ID = "7K64KRXNM6"
 ISSUER_ID = "fab32ffa-1bd6-4f10-adba-896f0fbf60ff"
 API_KEY_PATH = "./fastlane/AuthKey_#{API_KEY_ID}.p8"
 
-RESIGN_IPA_PATH = "#{Dir.home}/beta/ipa/NroNgoo.ipa"
-RESIGNED_IPA_PATH = "#{Dir.home}/beta/ipa/NroNgoo.ipa"
+RESIGN_IPA_PATH = "#{Dir.home}/work/beta/ipa/NroNgoo.ipa"
+RESIGNED_IPA_PATH = "#{Dir.home}/work/beta/ipa/NroNgoo.ipa"
 
-PROVISIONING_PROFILE_DIR = "#{Dir.home}/beta/MobileVersion"
+PROVISIONING_PROFILE_DIR = "#{Dir.home}/work/beta/MobileVersion"
 
 ### 🔥 Các thông tin liên quan đến phiên bản ứng dụng ###
 DISPLAY_NAME = "NroNgoo"
